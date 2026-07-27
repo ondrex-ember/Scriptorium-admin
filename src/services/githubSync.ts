@@ -64,8 +64,12 @@ export async function fetchGithubState(currentState: GameStateData): Promise<Git
         if (res.ok) {
           const json = await res.json();
           if (json && (json.time || json.actors)) {
+            const normalizedState: GameStateData = {
+              ...json,
+              totalPopulation: (json.totalPopulation === 10000 || !json.totalPopulation) ? 4200 : json.totalPopulation
+            };
             return {
-              newState: json as GameStateData,
+              newState: normalizedState,
               sourceRepo: repo.name,
               sourcePath: endpoint.path,
               commitInfo

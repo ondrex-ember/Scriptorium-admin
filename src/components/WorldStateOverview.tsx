@@ -211,7 +211,7 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
           </div>
           <div className="flex items-baseline gap-2">
             <div className="text-2xl font-mono font-bold text-stone-100">
-              {(state.totalPopulation || 4200).toLocaleString('cs-CZ')}
+              {((!state.totalPopulation || state.totalPopulation === 10000) ? 4200 : state.totalPopulation).toLocaleString('cs-CZ')}
             </div>
             <span className="text-xs font-semibold text-amber-300">duší</span>
           </div>
