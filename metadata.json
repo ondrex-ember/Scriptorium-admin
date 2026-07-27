@@ -1,0 +1,6 @@
+{
+  "name": "Chronicon - Admin Dashboard",
+  "description": "Správa, monitoring a plánování rozvoje pro generativní světový engine Chronicon (1465 Olomouc) a jeho propojení se hrou Scriptorium.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
