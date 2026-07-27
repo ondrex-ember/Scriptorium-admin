@@ -59,12 +59,19 @@ export default function App() {
     }
   };
 
-  // Initial Sync attempt on app mount if in GitHub mode
+  // Initial Sync & periodic auto-polling every 30 seconds in GitHub mode
   useEffect(() => {
-    if (syncMode === 'github' && !lastGithubSyncTime) {
-      handleSyncGithub();
+    if (syncMode === 'github') {
+      if (!lastGithubSyncTime) {
+        handleSyncGithub();
+      }
+      const interval = setInterval(() => {
+        handleSyncGithub();
+      }, 30000); // Auto-sync every 30 seconds
+
+      return () => clearInterval(interval);
     }
-  }, []);
+  }, [syncMode]);
 
   // Simulation Triggers
   const handleRunTick = () => {

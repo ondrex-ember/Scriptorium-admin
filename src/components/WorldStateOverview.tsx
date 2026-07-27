@@ -209,12 +209,15 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
             <span className="font-medium text-amber-300/90">POPULACE & ZBOŽNOST</span>
             <Users className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="text-2xl font-mono font-bold text-stone-100">
-            {state.totalPopulation.toLocaleString('cs-CZ')}
+          <div className="flex items-baseline gap-2">
+            <div className="text-2xl font-mono font-bold text-stone-100">
+              {(state.totalPopulation || 4200).toLocaleString('cs-CZ')}
+            </div>
+            <span className="text-xs font-semibold text-amber-300">duší</span>
           </div>
-          <div className="text-xs text-stone-400 mt-1 flex items-center justify-between">
+          <div className="text-[11px] text-stone-400 mt-0.5 flex items-center justify-between">
+            <span>Olomoucká diecéze</span>
             <span>Úmrtí: <strong className="text-stone-300">{state.totalDeaths}</strong></span>
-            <span>Pohřby: <strong className="text-stone-300">{state.totalFuneralEvents}</strong></span>
           </div>
           <div className="mt-3 pt-2 border-t border-stone-800/80 flex items-center justify-between text-xs">
             <span className="text-stone-400">Virtue (Zbožnost):</span>

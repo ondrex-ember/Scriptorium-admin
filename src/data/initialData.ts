@@ -221,7 +221,7 @@ export const INITIAL_GAME_STATE: GameStateData = {
   goldenAge: false,
   goldenAgeTicks: 0,
   rescueActionsLeft: 3,
-  totalPopulation: 10000,
+  totalPopulation: 4200,
   totalDeaths: 12,
   totalFuneralEvents: 2,
   pendingSepulturas: [

@@ -23,6 +23,21 @@ export const TrendsAndRoadmap: React.FC<TrendsAndRoadmapProps> = ({ state }) => 
     stores: a.stores
   }));
 
+  // Community Lux trend chart data generated up to current date
+  const communityTrendData = React.useMemo(() => {
+    const list = [...INITIAL_SCRIPTORIUM_COMMUNITY];
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (!list.some(item => item.date === todayStr)) {
+      list.push({
+        date: todayStr,
+        wsum_lux: 1580,
+        wsum_umbra: 0,
+        wsum: 34
+      });
+    }
+    return list;
+  }, []);
+
   const handleAddRoadmapItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle) return;
@@ -90,7 +105,7 @@ export const TrendsAndRoadmap: React.FC<TrendsAndRoadmapProps> = ({ state }) => 
             <h3 className="font-serif font-bold text-xs text-amber-300">Aktivita hráček a hráčů Scriptorium (Lux body)</h3>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={INITIAL_SCRIPTORIUM_COMMUNITY}>
+                <LineChart data={communityTrendData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
                   <XAxis dataKey="date" stroke="#a1a1aa" fontSize={10} tickLine={false} />
                   <YAxis stroke="#a1a1aa" fontSize={10} />
