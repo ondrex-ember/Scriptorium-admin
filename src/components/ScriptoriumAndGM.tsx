@@ -4,7 +4,7 @@ import { Scroll, Sparkles, Send, CheckCircle2, XCircle, Clock, Shield, BellRing,
 
 interface ScriptoriumAndGMProps {
   state: GameStateData;
-  onResolvePetition: (type: 'hospes' | 'sepultura' | 'studovna' | 'pocestny', id: string, choice: 'accept' | 'decline' | 'defer') => void;
+  onResolvePetition: (type: 'hospes' | 'sepultura' | 'studovna' | 'pocestny' | 'material' | 'farni', id: string, choice: 'accept' | 'decline' | 'defer') => void;
   onUpdateAbbotMessage: (message: string, mood: string, virtue: number) => void;
   onToggleFeastFast: (type: 'feast' | 'fast' | 'clear') => void;
 }
@@ -116,6 +116,157 @@ export const ScriptoriumAndGM: React.FC<ScriptoriumAndGMProps> = ({
                       className="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
                     >
                       <CheckCircle2 className="w-3 h-3" /> Udělit sepulturu
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Pocestny Queue */}
+          <div className="bg-stone-950/80 p-4 rounded-xl border border-stone-800 space-y-3">
+            <div className="flex items-center justify-between text-xs font-semibold text-amber-300">
+              <span>🥾 Pocestní u brány</span>
+              <span className="font-mono bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
+                {state.pendingPocestny.length} čeká
+              </span>
+            </div>
+
+            {state.pendingPocestny.length === 0 ? (
+              <p className="text-xs text-stone-500 italic py-2">Žádní nevyřízení pocestní.</p>
+            ) : (
+              state.pendingPocestny.map(p => (
+                <div key={p.id} className="bg-stone-900 p-3 rounded-lg border border-stone-800 text-xs space-y-2">
+                  <div className="flex justify-between font-bold text-stone-200">
+                    <span>
+                      {p.variant === 'poutnik' ? 'Poutník' : p.variant === 'kramar' ? 'Kramář' : 'Žebravý mnich'}
+                    </span>
+                  </div>
+                  <div className="flex gap-1.5 pt-1">
+                    <button
+                      onClick={() => onResolvePetition('pocestny', p.id, 'accept')}
+                      className="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                    >
+                      <CheckCircle2 className="w-3 h-3" /> Přijmout na nocleh
+                    </button>
+                    <button
+                      onClick={() => onResolvePetition('pocestny', p.id, 'decline')}
+                      className="bg-rose-950 hover:bg-rose-900 text-rose-300 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                    >
+                      <XCircle className="w-3 h-3" /> Odmítnout
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Studovna Petition (max 1, ne fronta) */}
+          <div className="bg-stone-950/80 p-4 rounded-xl border border-stone-800 space-y-3">
+            <div className="flex items-center justify-between text-xs font-semibold text-amber-300">
+              <span>📜 Žádost Vrchnosti o Studovnu</span>
+              <span className="font-mono bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
+                {state.pendingStudovna ? '1 čeká' : '0 čeká'}
+              </span>
+            </div>
+
+            {!state.pendingStudovna ? (
+              <p className="text-xs text-stone-500 italic py-2">Žádná nevyřízená žádost o Studovnu.</p>
+            ) : (
+              <div className="bg-stone-900 p-3 rounded-lg border border-stone-800 text-xs space-y-2">
+                <div className="flex justify-between font-bold text-stone-200">
+                  <span>
+                    {state.pendingStudovna.cause === 'dispute' ? 'Majetkový spor' : state.pendingStudovna.cause === 'lineage' ? 'Rodokmen' : 'Závěť'}
+                  </span>
+                </div>
+                <div className="flex gap-1.5 pt-1">
+                  <button
+                    onClick={() => onResolvePetition('studovna', state.pendingStudovna!.id, 'accept')}
+                    className="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                  >
+                    <CheckCircle2 className="w-3 h-3" /> Otevřít Studovnu
+                  </button>
+                  <button
+                    onClick={() => onResolvePetition('studovna', state.pendingStudovna!.id, 'decline')}
+                    className="bg-rose-950 hover:bg-rose-900 text-rose-300 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                  >
+                    <XCircle className="w-3 h-3" /> Odmítnout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Material Request (max 1, ne fronta) — zakazky-centralizace-mrd Fáze 2 */}
+          <div className="bg-stone-950/80 p-4 rounded-xl border border-stone-800 space-y-3">
+            <div className="flex items-center justify-between text-xs font-semibold text-amber-300">
+              <span>📦 Žádost o materiál (Zakázky)</span>
+              <span className="font-mono bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
+                {state.pendingMaterialRequest ? '1 čeká' : '0 čeká'}
+              </span>
+            </div>
+
+            {!state.pendingMaterialRequest ? (
+              <p className="text-xs text-stone-500 italic py-2">Žádná nevyřízená žádost o materiál.</p>
+            ) : (
+              <div className="bg-stone-900 p-3 rounded-lg border border-stone-800 text-xs space-y-2">
+                <div className="flex justify-between font-bold text-stone-200">
+                  <span>{state.pendingMaterialRequest.actorId}</span>
+                  <span className="text-amber-300">{state.pendingMaterialRequest.rewardGrose} grošů</span>
+                </div>
+                <p className="text-[11px] text-stone-400">
+                  {state.pendingMaterialRequest.qty}× {state.pendingMaterialRequest.itemId} · lhůta {state.pendingMaterialRequest.deadlineDays} dní
+                </p>
+                <div className="flex gap-1.5 pt-1">
+                  <button
+                    onClick={() => onResolvePetition('material', state.pendingMaterialRequest!.id, 'accept')}
+                    className="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                  >
+                    <CheckCircle2 className="w-3 h-3" /> Dodat materiál
+                  </button>
+                  <button
+                    onClick={() => onResolvePetition('material', state.pendingMaterialRequest!.id, 'decline')}
+                    className="bg-rose-950 hover:bg-rose-900 text-rose-300 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                  >
+                    <XCircle className="w-3 h-3" /> Odmítnout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Farní zakázky (křest/svatba/pohřeb) — farnost-chronicon-reference.md */}
+          <div className="bg-stone-950/80 p-4 rounded-xl border border-stone-800 space-y-3">
+            <div className="flex items-center justify-between text-xs font-semibold text-amber-300">
+              <span>✝️ Farní žádosti (křest/svatba/pohřeb)</span>
+              <span className="font-mono bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
+                {state.pendingFarniEvents.length} čeká
+              </span>
+            </div>
+
+            {state.pendingFarniEvents.length === 0 ? (
+              <p className="text-xs text-stone-500 italic py-2">Žádné nevyřízené farní žádosti.</p>
+            ) : (
+              state.pendingFarniEvents.map(f => (
+                <div key={f.id} className="bg-stone-900 p-3 rounded-lg border border-stone-800 text-xs space-y-2">
+                  <div className="flex justify-between font-bold text-stone-200">
+                    <span>
+                      {f.farniType === 'baptism' ? '👶 Křest' : f.farniType === 'wedding' ? '💍 Svatba' : '⚰️ Pohřeb'}
+                    </span>
+                    <span className="text-stone-400 font-normal">týden {f.week}</span>
+                  </div>
+                  <div className="flex gap-1.5 pt-1">
+                    <button
+                      onClick={() => onResolvePetition('farni', f.id, 'accept')}
+                      className="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                    >
+                      <CheckCircle2 className="w-3 h-3" /> Vykonat obřad
+                    </button>
+                    <button
+                      onClick={() => onResolvePetition('farni', f.id, 'decline')}
+                      className="bg-rose-950 hover:bg-rose-900 text-rose-300 px-2.5 py-1 rounded text-[11px] flex items-center gap-1"
+                    >
+                      <XCircle className="w-3 h-3" /> Odmítnout
                     </button>
                   </div>
                 </div>
