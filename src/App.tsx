@@ -59,19 +59,12 @@ export default function App() {
     }
   };
 
-  // Initial Sync & periodic auto-polling every 30 seconds in GitHub mode
+  // Initial Sync attempt on app mount if in GitHub mode
   useEffect(() => {
-    if (syncMode === 'github') {
-      if (!lastGithubSyncTime) {
-        handleSyncGithub();
-      }
-      const interval = setInterval(() => {
-        handleSyncGithub();
-      }, 30000); // Auto-sync every 30 seconds
-
-      return () => clearInterval(interval);
+    if (syncMode === 'github' && !lastGithubSyncTime) {
+      handleSyncGithub();
     }
-  }, [syncMode]);
+  }, []);
 
   // Simulation Triggers
   const handleRunTick = () => {
@@ -216,7 +209,7 @@ export default function App() {
 
   // Scriptorium & GM
   const handleResolvePetition = (
-    type: 'hospes' | 'sepultura' | 'studovna' | 'pocestny',
+    type: 'hospes' | 'sepultura' | 'studovna' | 'pocestny' | 'material' | 'farni',
     id: string,
     choice: 'accept' | 'decline' | 'defer'
   ) => {
