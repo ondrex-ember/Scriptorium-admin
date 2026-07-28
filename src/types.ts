@@ -114,6 +114,24 @@ export interface PendingPocestny {
   createdAtTick: number;
 }
 
+// Q2 port (27.7.2026) — mirror reálných polí z chronicon/core/engine.js,
+// ne admin dashboardu vlastní konvence (fee/wealth apod.), aby import
+// skutečného snapshotu/state JSONu seděl beze změn.
+export interface PendingMaterialRequest {
+  id: string;
+  actorId: string;
+  itemId: string;
+  qty: number;
+  deadlineDays: number;
+  rewardGrose: number;
+}
+
+export interface PendingFarniEvent {
+  id: string;
+  week: number;
+  farniType: 'baptism' | 'wedding' | 'funeral';
+}
+
 export interface ScriptoriumCommunityPoint {
   date: string;
   wsum_lux: number;
@@ -141,6 +159,8 @@ export interface GameStateData {
   pendingHospites: PendingHospes[];
   pendingStudovna: PendingStudovna | null;
   pendingPocestny: PendingPocestny[];
+  pendingMaterialRequest: PendingMaterialRequest | null;
+  pendingFarniEvents: PendingFarniEvent[];
   unlockedFlags: string[];
   actors: Actor[];
   gm: GMState;
