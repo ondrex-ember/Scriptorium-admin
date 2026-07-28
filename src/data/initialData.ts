@@ -221,7 +221,7 @@ export const INITIAL_GAME_STATE: GameStateData = {
   goldenAge: false,
   goldenAgeTicks: 0,
   rescueActionsLeft: 3,
-  totalPopulation: 4200,
+  totalPopulation: 10000,
   totalDeaths: 12,
   totalFuneralEvents: 2,
   pendingSepulturas: [
@@ -255,6 +255,21 @@ export const INITIAL_GAME_STATE: GameStateData = {
       id: 'poc_01',
       variant: 'poutnik',
       createdAtTick: 16
+    }
+  ],
+  pendingMaterialRequest: {
+    id: 'material_kovar_17',
+    actorId: 'kovar',
+    itemId: 'zelezo',
+    qty: 5,
+    deadlineDays: 7,
+    rewardGrose: 20
+  },
+  pendingFarniEvents: [
+    {
+      id: 'farni_baptism_17',
+      week: 17,
+      farniType: 'baptism'
     }
   ],
   unlockedFlags: ['porta_offer'],
