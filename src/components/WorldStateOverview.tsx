@@ -1,7 +1,7 @@
 import React from 'react';
 import { GameStateData, LogEntry } from '../types';
 import { AlertCircle, Thermometer, Wind, CloudRain, Users, HeartHandshake, Scroll, Activity, Sparkles, Building2, Flame, GitBranch, RefreshCw, Cpu, ExternalLink, CheckCircle2 } from 'lucide-react';
-import { GITHUB_ADMIN_REPO_URL, GITHUB_SCRIPTORIUM_REPO_URL } from '../services/githubSync';
+import { GITHUB_REPO_URL } from '../services/githubSync';
 
 interface WorldStateOverviewProps {
   state: GameStateData;
@@ -27,7 +27,7 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
   const crisisActors = state.actors.filter(a => a.status === 'krize' || a.status === 'zanikajici');
   const stableActors = state.actors.filter(a => a.status === 'stable');
 
-  const totalPetitions = state.pendingHospites.length + state.pendingSepulturas.length + (state.pendingStudovna ? 1 : 0) + state.pendingPocestny.length;
+  const totalPetitions = state.pendingHospites.length + state.pendingSepulturas.length + (state.pendingStudovna ? 1 : 0) + state.pendingPocestny.length + (state.pendingMaterialRequest ? 1 : 0) + state.pendingFarniEvents.length;
 
   return (
     <div className="space-y-6">
@@ -55,12 +55,12 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-serif font-bold text-sm tracking-wide">
                   {syncMode === 'github'
-                    ? 'Živá synchronizace s herním serverem & repozitářem'
+                    ? 'Živá synchronizace s repozitářem ondrex-ember/chronicon'
                     : 'Režim Lokální Simulace (In-App Engine)'}
                 </h3>
                 {syncMode === 'github' ? (
                   <span className="bg-emerald-950 text-emerald-300 border border-emerald-700/80 text-[10px] px-2 py-0.5 rounded-full font-mono flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Synchrornizováno
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" /> GitHub Main Branch
                   </span>
                 ) : (
                   <span className="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] px-2 py-0.5 rounded-full font-mono">
@@ -69,28 +69,20 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
                 )}
               </div>
 
-              <div className="text-xs text-stone-300/90 mt-1.5 space-y-1 max-w-3xl">
+              <p className="text-xs text-stone-300/90 mt-1 max-w-2xl">
                 {syncMode === 'github' ? (
                   <>
-                    <p className="flex flex-wrap items-center gap-2">
-                      <span className="text-stone-400">🖥️ Herní Server & Data:</span>
-                      <a href={GITHUB_SCRIPTORIUM_REPO_URL} target="_blank" rel="noopener noreferrer" className="underline font-mono text-sky-300 hover:text-sky-200 inline-flex items-center gap-1 bg-sky-950/80 px-2 py-0.5 rounded border border-sky-800/60">
-                        ondrex-ember/scriptorium (scriptorium/gamestate.json) <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </p>
-                    <p className="flex flex-wrap items-center gap-2">
-                      <span className="text-stone-400">💻 Klient Admin Aplikace:</span>
-                      <a href={GITHUB_ADMIN_REPO_URL} target="_blank" rel="noopener noreferrer" className="underline font-mono text-amber-300 hover:text-amber-200 inline-flex items-center gap-1 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800/60">
-                        ondrex-ember/Scriptorium-admin <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </p>
+                    Aplikace aktivně načítá herní data přímo z oficiálního repozitáře{' '}
+                    <a href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer" className="underline font-mono text-sky-300 hover:text-sky-200 inline-flex items-center gap-1">
+                      ondrex-ember/chronicon <ExternalLink className="w-3 h-3" />
+                    </a>. Změny v repozitáři se okamžitě projeví.
                   </>
                 ) : (
-                  <p>
-                    Běžíte v izolované lokální simulaci. Můžete libovolně generovat ticky, vytvářet nové aktéry a testovat ekonomické cykly bez přepisování serverových dat.
-                  </p>
+                  <>
+                    Běžíte v izolované lokální simulaci. Můžete libovolně generovat ticky, vytvářet nové aktéry a testovat ekonomické cykly.
+                  </>
                 )}
-              </div>
+              </p>
 
               {syncMode === 'github' && (
                 <div className="flex items-center gap-3 mt-2 text-[11px] text-sky-200/80 font-mono">
@@ -110,7 +102,7 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
                   className="bg-sky-900 hover:bg-sky-800 text-sky-100 border border-sky-600/80 text-xs px-3 py-1.5 rounded-lg font-medium transition-all shadow-sm flex items-center gap-1.5"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isSyncingGithub ? 'animate-spin text-amber-300' : ''}`} />
-                  <span>Obnovit ze Serveru</span>
+                  <span>Obnovit z GitHubu</span>
                 </button>
                 <button
                   onClick={() => onToggleSyncMode('local')}
@@ -125,7 +117,7 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
                 className="bg-sky-950 hover:bg-sky-900 text-sky-200 border border-sky-700/80 text-xs px-3 py-1.5 rounded-lg font-medium transition-all shadow-sm flex items-center gap-1.5"
               >
                 <GitBranch className="w-3.5 h-3.5 text-sky-400" />
-                <span>Zapnout Server Sync (ondrex-ember/scriptorium)</span>
+                <span>Zapnout GitHub Sync (ondrex-ember/chronicon)</span>
               </button>
             )}
           </div>
@@ -209,15 +201,12 @@ export const WorldStateOverview: React.FC<WorldStateOverviewProps> = ({
             <span className="font-medium text-amber-300/90">POPULACE & ZBOŽNOST</span>
             <Users className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <div className="text-2xl font-mono font-bold text-stone-100">
-              {((!state.totalPopulation || state.totalPopulation === 10000) ? 4200 : state.totalPopulation).toLocaleString('cs-CZ')}
-            </div>
-            <span className="text-xs font-semibold text-amber-300">duší</span>
+          <div className="text-2xl font-mono font-bold text-stone-100">
+            {state.totalPopulation.toLocaleString('cs-CZ')}
           </div>
-          <div className="text-[11px] text-stone-400 mt-0.5 flex items-center justify-between">
-            <span>Olomoucká diecéze</span>
+          <div className="text-xs text-stone-400 mt-1 flex items-center justify-between">
             <span>Úmrtí: <strong className="text-stone-300">{state.totalDeaths}</strong></span>
+            <span>Pohřby: <strong className="text-stone-300">{state.totalFuneralEvents}</strong></span>
           </div>
           <div className="mt-3 pt-2 border-t border-stone-800/80 flex items-center justify-between text-xs">
             <span className="text-stone-400">Virtue (Zbožnost):</span>
