@@ -215,7 +215,7 @@ export class ChroniconEngine {
   }
 
   // Handle Scriptorium Petition Actions
-  public resolvePetition(type: 'hospes' | 'sepultura' | 'studovna' | 'pocestny', id: string, choice: 'accept' | 'decline' | 'defer') {
+  public resolvePetition(type: 'hospes' | 'sepultura' | 'studovna' | 'pocestny' | 'material' | 'farni', id: string, choice: 'accept' | 'decline' | 'defer') {
     if (type === 'hospes') {
       const idx = this.state.pendingHospites.findIndex(h => h.id === id);
       if (idx !== -1) {
@@ -253,6 +253,28 @@ export class ChroniconEngine {
         this.state.pendingPocestny.splice(idx, 1);
         if (choice === 'accept') {
           this.addLog('Vrátný přijal pocestného u brány na nocleh.', 'S', '🥾', 'scriptorium');
+        }
+      }
+    } else if (type === 'material') {
+      // Q2 port — max 1 aktivní najednou (mirror studovna), ne fronta.
+      if (this.state.pendingMaterialRequest && this.state.pendingMaterialRequest.id === id) {
+        const item = this.state.pendingMaterialRequest;
+        this.state.pendingMaterialRequest = null;
+        if (choice === 'accept') {
+          this.addLog(`Klášter dodal materiál ${item.itemId} (${item.qty} ks) aktérovi ${item.actorId}. Odměna ${item.rewardGrose} grošů.`, 'S', '📦', 'scriptorium');
+        } else if (choice === 'decline') {
+          this.addLog(`Klášter žádost o materiál ${item.itemId} pro ${item.actorId} odmítl.`, 'S', '❌', 'scriptorium');
+        }
+      }
+    } else if (type === 'farni') {
+      const idx = this.state.pendingFarniEvents.findIndex(f => f.id === id);
+      if (idx !== -1) {
+        const item = this.state.pendingFarniEvents[idx];
+        this.state.pendingFarniEvents.splice(idx, 1);
+        if (choice === 'accept') {
+          this.addLog(`Klášter vykonal farní obřad (${item.farniType}).`, 'S', '✝️', 'scriptorium');
+        } else if (choice === 'decline') {
+          this.addLog(`Klášter farní žádost (${item.farniType}) odmítl.`, 'S', '❌', 'scriptorium');
         }
       }
     }
